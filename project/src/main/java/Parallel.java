@@ -1,18 +1,17 @@
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
-import java.util.stream.Collectors;
 
 
 public class Parallel {
 
-  private static class MyThread extends Thread {
+  private static class MaxSumThread extends Thread {
 
 
     private int sum;
     private List<List<Integer>> subMatrix;
 
-    MyThread(List<List<Integer>> subMatrix) {
+    MaxSumThread(List<List<Integer>> subMatrix) {
       this.subMatrix = subMatrix;
     }
 
@@ -34,36 +33,35 @@ public class Parallel {
 
   static int sumParallel(List<List<Integer>> matrix, int threadsNum) throws InterruptedException {
 
-    int MyThreadNum = 0;
+    int arraySize = 0;
     int arraysTotal = matrix.size();
 
     int div = arraysTotal / threadsNum, rem = arraysTotal % threadsNum;
 
     if (div == 0) {
-      MyThreadNum = rem;
-    }
-    else
-      MyThreadNum = threadsNum;
+      arraySize = rem;
+    } else
+      arraySize = threadsNum;
 
 
-    MyThread[] threads = new MyThread[MyThreadNum];
+    MaxSumThread[] threads = new MaxSumThread[arraySize];
 
     int startIndex = 0;
 
-    for (int i = 0; i < MyThreadNum; i++) {
+    for (int i = 0; i < arraySize; i++) {
       int arraysNum = div;// 3
       if (rem > 0) {
         arraysNum += 1;
         rem--;
       }
-      threads[i] = new MyThread(matrix.subList(startIndex, startIndex + arraysNum));
+      threads[i] = new MaxSumThread(matrix.subList(startIndex, startIndex + arraysNum));
       startIndex += arraysNum;
       threads[i].start();
     }
 
     int sum = 0;
 
-    for (int i = 0; i < MyThreadNum; i++) {
+    for (int i = 0; i < arraySize; i++) {
       threads[i].join();
       sum += threads[i].getSum();
     }
@@ -95,31 +93,7 @@ public class Parallel {
             (list -> list.parallelStream().max(Integer::compare).get()).reduce(0, Integer::sum)).get();
   }
 
-  public static void main(String[] args) {
-    List<List<Integer>> matrix = generateMatrix(3, 3);
-    try {
-      long startTime = System.currentTimeMillis();
 
-
-      System.out.println(sumParallel(matrix, 1));
-      long estimatedTime = System.currentTimeMillis() - startTime;
-      System.out.println(estimatedTime + "\n");
-
-      startTime = System.currentTimeMillis();
-      System.out.println(sumParallel(matrix, 2));
-      estimatedTime = System.currentTimeMillis() - startTime;
-      System.out.println(estimatedTime + "\n");
-      startTime = System.currentTimeMillis();
-      System.out.println(sumParallel(matrix, 7));
-      estimatedTime = System.currentTimeMillis() - startTime;
-      System.out.println(estimatedTime + "\n");
-
-      System.out.println(sumParallelStream(matrix, 5));
-
-
-    } catch (Exception e) {
-    }
-  }
 
 
 }
