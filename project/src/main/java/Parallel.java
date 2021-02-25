@@ -49,7 +49,7 @@ public class Parallel {
     int startIndex = 0;
 
     for (int i = 0; i < arraySize; i++) {
-      int arraysNum = div;// 3
+      int arraysNum = div;
       if (rem > 0) {
         arraysNum += 1;
         rem--;
@@ -85,7 +85,6 @@ public class Parallel {
     }
     return matrix;
   }
-
   static int sumParallelStream(List<List<Integer>> matrix, int threadsNum) throws InterruptedException,
           ExecutionException {
     ForkJoinPool customThreadPool = new ForkJoinPool(threadsNum);
