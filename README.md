@@ -1,2 +1,2 @@
 # Lab1OS
-The project is in dev branch
+The project is in dev branch (like in other repos)
